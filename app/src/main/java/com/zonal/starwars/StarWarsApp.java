@@ -10,6 +10,9 @@ import org.greenrobot.greendao.database.Database;
 
 public class StarWarsApp extends Application {
 
+    //TODO:
+    //  Add unit and instrumentation tests to the code (including the UI Tests)
+
     private DaoSession daoSession;
 
     @Override

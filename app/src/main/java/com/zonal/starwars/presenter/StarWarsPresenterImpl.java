@@ -35,19 +35,19 @@ public class StarWarsPresenterImpl implements StarWarsPresenter {
 
     public StarWarsPresenterImpl(StarWarsView starWarsView, Activity activity) {
         this.starWarsView = starWarsView;
-        this.activity=activity;
+        this.activity = activity;
         getPlanets(API_URL);
     }
 
 
     private void getPlanets(final String urlName) {
 
-        Thread thread =  new Thread() {
+        Thread thread = new Thread() {
             @Override
             public void run() {
 
                 try {
-                    URL  url = new URL(urlName);
+                    URL url = new URL(urlName);
                     BufferedReader in = new BufferedReader(
                             new InputStreamReader(
                                     url.openStream()));
@@ -59,7 +59,7 @@ public class StarWarsPresenterImpl implements StarWarsPresenter {
                     }
 
                     JSONObject jsonObject = new JSONObject(planets.toString());
-                    parseResponse(jsonObject);
+                    parsePlanetsResponse(jsonObject);
 
                     in.close();
                 } catch (IOException | JSONException e) {
@@ -72,7 +72,37 @@ public class StarWarsPresenterImpl implements StarWarsPresenter {
 
     }
 
-    private void parseResponse(final JSONObject response) {
+    private void getPlanetDetails(final String urlName) {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+
+                try {
+                    URL url = new URL(urlName);
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(
+                                    url.openStream()));
+                    String inputLine;
+                    StringBuilder planets = new StringBuilder();
+
+                    while ((inputLine = in.readLine()) != null) {
+                        planets.append(inputLine);
+                    }
+
+                    JSONObject jsonObject = new JSONObject(planets.toString());
+                    parsePlanetResponse(jsonObject);
+
+                    in.close();
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+    }
+
+    private void parsePlanetsResponse(final JSONObject response) {
 
         Runnable runnable = new Runnable() {
             @Override
@@ -84,14 +114,37 @@ public class StarWarsPresenterImpl implements StarWarsPresenter {
                     planetList = new ArrayList<>();
 
                     //loop through all planets
-                    for (int i = 0; i < jsonArrayPlanets.length()-1; i++) {
+                    for (int i = 0; i < jsonArrayPlanets.length() - 1; i++) {
                         JSONObject planetJson = jsonArrayPlanets.getJSONObject(i);
-                        Planet planet = new Planet(planetJson.getString("name"), planetJson.getString("population"));
+                        Planet planet = new Planet(planetJson.getString("name"), planetJson.getString("population"), planetJson.getString("rotation_period"), planetJson.getString("orbital_period"), planetJson.getString("diameter"), planetJson.getString("climate"), planetJson.getString("gravity"), planetJson.getString("terrain"), planetJson.getString("url"));
                         planetList.add(planet);
                         daoSession.insertOrReplace(planet);
                     }
 
                     starWarsView.setPlanets(planetList);
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(runnable);
+    }
+
+    private void parsePlanetResponse(final JSONObject response) {
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                DaoSession daoSession = ((StarWarsApp) activity.getApplication()).getDaoSession();
+                try {
+                    Planet planet = new Planet(response.getString("name"), response.getString("population"), response.getString("rotation_period"), response.getString("orbital_period"), response.getString("diameter"), response.getString("climate"), response.getString("gravity"), response.getString("terrain"), response.getString("url"));
+                    daoSession.insertOrReplace(planet);
+
+                    starWarsView.updatePlanet(planet);
 
 
                 } catch (JSONException e) {
@@ -109,12 +162,17 @@ public class StarWarsPresenterImpl implements StarWarsPresenter {
         getPlanets(API_URL);
     }
 
+    @Override
+    public void refreshPlanet(String url) {
+        getPlanetDetails(url);
+    }
+
     // Sorts the planet list depending on user choice and updates the StarWarsAdapter with the new list
     @Override
     public void sortList(final int sort) {
-        Collections.sort(planetList, new Comparator<Planet>(){
+        Collections.sort(planetList, new Comparator<Planet>() {
             public int compare(Planet planet1, Planet planet2) {
-                switch(sort) {
+                switch (sort) {
                     case StarWarsPresenter.name_asc:
                         return planet1.getName().compareToIgnoreCase(planet2.getName()); // To compare string values
                     case StarWarsPresenter.name_desc:
@@ -130,6 +188,6 @@ public class StarWarsPresenterImpl implements StarWarsPresenter {
     @Override
     public void getPlanet(int position) {
         Planet planet = planetList.get(position);
-        starWarsView.setPlanetDialog(planet);
+        starWarsView.openPlanetDetails(planet);
     }
 }

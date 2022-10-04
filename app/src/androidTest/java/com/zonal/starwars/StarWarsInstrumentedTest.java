@@ -24,4 +24,12 @@ public class StarWarsInstrumentedTest {
 
         assertEquals("com.zonal.starwars", appContext.getPackageName());
     }
+
+    //TODO:
+    //  Test the App gets the Planet list correctly from the api
+    //  Test the list selection grabs the right Planet and starts the correct activity
+    //  Test the menu items work
+    //  Test the refresh layout works
+    //  Test the refresh Planet details works
+    //  Test the back arrow works (Planet Activity -> StarWarActivity)
 }

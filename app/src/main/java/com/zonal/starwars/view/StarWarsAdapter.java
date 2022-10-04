@@ -67,6 +67,14 @@ public class StarWarsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return planetList.size();
     }
 
+    public void updateItem(Planet planet) {
+        for(int i = 0; i < planetList.size(); i++) {
+            if(planetList.get(i).getName().equals(planet.getName())){
+                planetList.set(i, planet);
+            }
+        }
+    }
+
     public void setPlanetList(List<Planet> items) {
 
         planetList.clear();

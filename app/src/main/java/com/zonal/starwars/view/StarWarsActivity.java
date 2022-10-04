@@ -1,5 +1,6 @@
 package com.zonal.starwars.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.zonal.starwars.PlanetDialog;
 import com.zonal.starwars.R;
 import com.zonal.starwars.model.Planet;
 import com.zonal.starwars.presenter.StarWarsPresenter;
@@ -59,10 +59,23 @@ public class StarWarsActivity extends AppCompatActivity implements StarWarsView,
     }
 
     @Override
-    public void setPlanetDialog(Planet planet) {
-        // Displays a PlanetDialog populated with data from "planet"
-        PlanetDialog planetDialog = new PlanetDialog(StarWarsActivity.this, planet);
-        planetDialog.show();
+    public void updatePlanet(Planet planet) {
+        starWarsAdapter.updateItem(planet);
+    }
+
+    @Override
+    public void openPlanetDetails(Planet planet) {
+        Intent intent = new Intent(StarWarsActivity.this, PlanetDetailsActivity.class);
+        intent.putExtra("name", planet.getName());
+        intent.putExtra("population", planet.getPopulation());
+        intent.putExtra("rotation", planet.getRotation());
+        intent.putExtra("orbit", planet.getOrbit());
+        intent.putExtra("diameter", planet.getDiameter());
+        intent.putExtra("climate", planet.getClimate());
+        intent.putExtra("gravity", planet.getGravity());
+        intent.putExtra("terrain", planet.getTerrain());
+        intent.putExtra("planetUrl", planet.getUrl());
+        startActivity(intent);
     }
 
     @Override

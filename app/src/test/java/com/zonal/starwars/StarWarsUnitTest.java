@@ -10,4 +10,9 @@ public class StarWarsUnitTest {
     public void starWarsTest() {
 
     }
+
+    //TODO:
+    //  Test the Planet class is created correctly
+    //  Test the list is created correctly
+    //  Test the sort method(s) for the list work correctly
 }

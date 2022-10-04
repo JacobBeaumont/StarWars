@@ -4,6 +4,7 @@ public interface StarWarsPresenter {
     int name_asc = 0;
     int name_desc = 1;
     void refreshList();
+    void refreshPlanet(String url);
     void sortList(int sort);
     void getPlanet(int position);
 }
