@@ -156,6 +156,21 @@ public class StarWarsPresenterImpl implements StarWarsPresenter {
         handler.post(runnable);
     }
 
+    public List<Planet> sort(List<Planet> list, final int sort){
+        Collections.sort(list, new Comparator<Planet>() {
+            public int compare(Planet planet1, Planet planet2) {
+                switch (sort) {
+                    case StarWarsPresenter.name_asc:
+                        return planet1.getName().compareToIgnoreCase(planet2.getName()); // To compare string values
+                    case StarWarsPresenter.name_desc:
+                        return planet2.getName().compareToIgnoreCase(planet1.getName()); // To compare string values
+                }
+                return 0;
+            }
+        });
+        return list;
+    }
+
     // Makes a call to retrieve the planets
     @Override
     public void refreshList() {
@@ -170,17 +185,7 @@ public class StarWarsPresenterImpl implements StarWarsPresenter {
     // Sorts the planet list depending on user choice and updates the StarWarsAdapter with the new list
     @Override
     public void sortList(final int sort) {
-        Collections.sort(planetList, new Comparator<Planet>() {
-            public int compare(Planet planet1, Planet planet2) {
-                switch (sort) {
-                    case StarWarsPresenter.name_asc:
-                        return planet1.getName().compareToIgnoreCase(planet2.getName()); // To compare string values
-                    case StarWarsPresenter.name_desc:
-                        return planet2.getName().compareToIgnoreCase(planet1.getName()); // To compare string values
-                }
-                return 0;
-            }
-        });
+        planetList = sort(planetList, sort);
         starWarsView.setPlanets(planetList);
     }
 

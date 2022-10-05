@@ -6,12 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".view.PlanetDetailsActivity">
+    tools:context=".view.PlanetDetailsActivity"
+    android:background="@color/colorPrimaryDark"
+    android:padding="5dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@drawable/roundrectangle">
 
         <TextView
             android:id="@+id/population"
